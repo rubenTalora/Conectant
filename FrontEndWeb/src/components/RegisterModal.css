@@ -1,0 +1,98 @@
+
+/* Overlay and centering to display modal above page content */
+.modal-ov {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+}
+
+.modal-bg {
+	position: absolute;
+	inset: 0;
+	backdrop-filter: blur(6px);
+	background: rgba(15, 23, 42, 0.04);
+}
+
+.modal-wrap {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-box {
+	background-color: #ffffff;
+	border-radius: 1rem;
+	padding: 1.75rem;
+	width: 24rem;
+	box-shadow: 0 12px 24px rgba(2,6,23,0.12);
+	position: relative;
+	z-index: 10;
+}
+
+.modal-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	text-align: center;
+	color: #0f172a;
+	margin: 0 0 1rem 0;
+}
+
+.modal-form {
+	display: grid;
+	gap: 1rem;
+}
+
+/* Neutral input style: always use the same border until submission */
+.modal-in {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 1px solid #cbd5e1;
+	border-radius: 0.5rem;
+	background: white;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Remove browser validation outlines that could change color */
+.modal-in:valid,
+.modal-in:invalid {
+	box-shadow: none;
+}
+
+/* Error state applied only after submit */
+.modal-in.error {
+	border-color: #ef4444;
+}
+
+/* Focus style: show gray border while focused */
+.modal-in:focus {
+	outline: none;
+	border-color: #9ca3af;
+	box-shadow: 0 0 0 4px rgba(156,163,175,0.06);
+}
+
+/* Ensure error state remains visible even when the field is focused */
+.modal-in.error:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239,68,68,0.06);
+}
+
+.modal-error {
+	margin-top: 0.75rem;
+	text-align: center;
+	color: #ef4444;
+	font-weight: 600;
+}
+
+.modal-btn {
+	width: 100%;
+	background-color: #3b82f6;
+	color: white;
+	font-weight: 600;
+	padding: 0.75rem;
+	border-radius: 0.5rem;
+	border: none;
+	cursor: pointer;
+}
+
