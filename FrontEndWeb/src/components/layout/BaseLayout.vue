@@ -12,10 +12,21 @@
               placeholder="Buscar..."
               class="search-in"
             />
-            <select v-model="selectedPage" class="page-sel">
+            <select v-model="selectedFilter" class="page-sel">
               <option value="Entidades">Entidades</option>
               <option value="Centros">Centros</option>
+              <option value="Todos">Todos</option>
             </select>
+            <button
+              type="button"
+              class="saved-btn"
+              :class="selectedPage === 'Guardados'
+                ? 'bg-slate-800 text-white hover:bg-slate-900'
+                : 'bg-slate-200 text-slate-700 hover:bg-slate-300'"
+              @click="selectedPage = 'Guardados'"
+            >
+              Guardados
+            </button>
           </div>
 
           <div class="bar-right relative">
@@ -41,14 +52,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, PropType } from 'vue'
 import { useUserStore } from '../../store/userStore'
+
+const props = defineProps({
+  selectedPage: {
+    type: String as PropType<'Entidades' | 'Centros' | 'Guardados' | 'Todos'>,
+    default: 'Entidades',
+  },
+  selectedFilter: {
+    type: String as PropType<'Entidades' | 'Centros' | 'Todos'>,
+    default: 'Entidades',
+  },
+  searchQuery: {
+    type: String,
+    default: '',
+  },
+})
+const emit = defineEmits<{
+  (e: 'update:selectedPage', value: 'Entidades' | 'Centros' | 'Guardados' | 'Todos'): void
+  (e: 'update:selectedFilter', value: 'Entidades' | 'Centros' | 'Todos'): void
+  (e: 'update:searchQuery', value: string): void
+}>()
 
 const userStore = useUserStore()
 const isAuthenticated = computed(() => userStore.authenticated)
 const username = computed(() => userStore.name)
-const searchQuery = ref('')
-const selectedPage = ref('Entidades')
+const searchQuery = computed({
+  get: () => props.searchQuery,
+  set: (value: string) => emit('update:searchQuery', value),
+})
+const selectedFilter = computed<
+  'Entidades' | 'Centros' | 'Todos'
+>({
+  get: () => props.selectedFilter,
+  set: (value) => emit('update:selectedFilter', value),
+})
+const selectedPage = computed<
+  'Entidades' | 'Centros' | 'Guardados' | 'Todos'
+>({
+  get: () => props.selectedPage,
+  set: (value) => emit('update:selectedPage', value),
+})
 const userMenuOpen = ref(false)
 
 const handleLogout = () => {
