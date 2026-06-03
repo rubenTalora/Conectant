@@ -39,8 +39,9 @@
             <button
               type="submit"
               class="modal-btn"
+              :disabled="isLoading"
             >
-              Confirmar
+              {{ isLoading ? 'Autenticando...' : 'Confirmar' }}
             </button>
           </form>
         </div>
@@ -50,38 +51,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../store/userStore'
+import { useSupabase } from '../composables/useSupabase'
 
 const userStore = useUserStore()
+const { login: supabaseLogin, getCurrentUser } = useSupabase()
 
 const username = ref('')
 const password = ref('')
 const submitted = ref(false)
 const hasEverFailed = ref(false)
-
-const correctUsername = 'Admin'
-const correctPassword = 'admin123'
+const isLoading = ref(false)
 
 const isAuthenticated = computed(() => userStore.authenticated)
 
 const showError = computed(() => {
   if (!submitted.value) return false
-  return username.value !== correctUsername || password.value !== correctPassword || hasEverFailed.value
+  return hasEverFailed.value
 })
 
-const isUsernameInvalid = computed(() => submitted.value && username.value !== correctUsername)
-const isPasswordInvalid = computed(() => submitted.value && password.value !== correctPassword)
+// Check if user is already logged in on mount
+onMounted(async () => {
+  const { user } = await getCurrentUser()
+  if (user) {
+    userStore.login(user.email || 'Usuario')
+  }
+})
 
-const handleRegister = () => {
+const handleRegister = async () => {
   submitted.value = true
-  if (username.value !== correctUsername || password.value !== correctPassword) {
+  isLoading.value = true
+
+  try {
+    const { data, error } = await supabaseLogin(username.value, password.value)
+    if (error) {
+      hasEverFailed.value = true
+      isLoading.value = false
+      return
+    }
+
+    if (data?.user) {
+      userStore.login(data.user.email || 'Usuario')
+    }
+  } catch (error) {
     hasEverFailed.value = true
   }
 
-  if (username.value === correctUsername && password.value === correctPassword) {
-    userStore.login(username.value)
-  }
+  isLoading.value = false
 }
 </script>
 

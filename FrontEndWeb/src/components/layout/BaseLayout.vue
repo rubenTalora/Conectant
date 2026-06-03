@@ -96,8 +96,8 @@ const selectedPage = computed<
 })
 const userMenuOpen = ref(false)
 
-const handleLogout = () => {
-  userStore.logout()
+const handleLogout = async () => {
+  await userStore.logout()
   userMenuOpen.value = false
 }
 
