@@ -72,13 +72,27 @@
 }
 
 .search-in,
-.page-sel {
+.page-sel,
+.saved-btn {
   padding: 0.85rem 1rem;
   border: 1px solid #cbd5e1;
   border-radius: 0.75rem;
-  background: #f8fafc;
+  background: white;
   color: #0f172a;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.page-sel {
+  min-width: 10rem;
+}
+
+.saved-btn {
+  border: none;
+  background: #e2e8f0;
+}
+
+.saved-btn:hover {
+  background: #cbd5e1;
 }
 
 .search-in:focus,
