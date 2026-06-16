@@ -71,7 +71,7 @@ const showError = computed(() => {
   return hasEverFailed.value
 })
 
-// Check if user is already logged in on mount
+// Mira si ya está logueado
 onMounted(async () => {
   const { user } = await getCurrentUser()
   if (user) {
