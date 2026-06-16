@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'data/supabase_config.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.initialize();
   runApp(const MyApp());
 }
 

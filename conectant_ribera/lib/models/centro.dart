@@ -16,4 +16,17 @@ class Centro {
     required this.associationId,
     required this.description,
   });
+
+  factory Centro.fromMap(Map<String, dynamic> map) {
+    return Centro(
+      id: map['id'].toString(),
+      name: map['name'] ?? '',
+      address: map['address'] ?? '',
+      lat: (map['lat'] as num?)?.toDouble() ?? 0,
+      lng: (map['lng'] as num?)?.toDouble() ?? 0,
+      associationId:
+          (map['association_id'] ?? map['associationId'] ?? '').toString(),
+      description: map['description'] ?? '',
+    );
+  }
 }

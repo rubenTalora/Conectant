@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+
+import '../data/app_data.dart';
 import '../models/association.dart';
 import 'centro_detail.dart';
 
 class AssociationDetailScreen extends StatelessWidget {
   final Association association;
-  const AssociationDetailScreen({super.key, required this.association});
+  final AppData appData;
+
+  const AssociationDetailScreen({
+    super.key,
+    required this.association,
+    required this.appData,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final linkedCentros = centrosForAssociation(association);
+    final linkedCentros = appData.centrosForAssociation(association);
 
     return Scaffold(
       appBar: AppBar(
@@ -116,6 +123,7 @@ class AssociationDetailScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => CentroDetailScreen(
                                 centro: centro,
+                                appData: appData,
                               ),
                             ),
                           );

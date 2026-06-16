@@ -3,12 +3,13 @@ description: Flutter scaffold converted from a Figma/React design for Centros Es
 publish_to: "none"
 version: 0.1.0+1
 environment:
-  sdk: ">=2.18.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  supabase_flutter: ^2.14.2
 
 dev_dependencies:
   flutter_test:

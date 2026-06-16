@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+
+import '../models/association.dart';
 import '../models/centro.dart';
 
 class CentroCard extends StatelessWidget {
   final Centro centro;
-  const CentroCard({super.key, required this.centro});
+  final Association? association;
+
+  const CentroCard({
+    super.key,
+    required this.centro,
+    this.association,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final association = associationForCentro(centro);
-
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
@@ -77,7 +82,7 @@ class CentroCard extends StatelessWidget {
             const SizedBox(height: 10),
             if (association != null) ...[
               Chip(
-                label: Text(association.name),
+                label: Text(association!.name),
                 avatar: const Icon(Icons.business, size: 18),
                 backgroundColor: Colors.teal[50],
               ),

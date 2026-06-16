@@ -17,15 +17,13 @@ class Association {
 
   factory Association.fromMap(Map<String, dynamic> map) {
     return Association(
-      id: map['id'] ?? '',
+      id: map['id'].toString(),
       name: map['name'] ?? '',
       type: map['type'] ?? '',
       description: map['description'] ??
           'Organización vinculada a centros especializados.',
-      contact: map['contact'] ??
-          'info@${map['name']?.toLowerCase().replaceAll(' ', '') ?? ''}.org',
-      website: map['website'] ??
-          'www.${map['name']?.toLowerCase().replaceAll(' ', '') ?? ''}.org',
+      contact: map['contact'] ?? '',
+      website: map['website'] ?? '',
     );
   }
 }
