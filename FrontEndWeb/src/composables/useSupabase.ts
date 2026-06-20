@@ -7,6 +7,8 @@ export interface SavedItem {
   contact?: string
   address?: string
   description?: string
+  city?: string
+  coordinates?: string
   type: 'entidad' | 'centro'
   created_at?: string
   user_id?: string
@@ -64,26 +66,38 @@ export const useSupabase = () => {
   const addItem = async (item: SavedItem) => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
-      if (userError || !user) throw new Error('Not authenticated')
+      if (userError || !user) {
+        console.error('Not authenticated:', userError)
+        throw new Error('Not authenticated')
+      }
+      console.log('Adding item for user:', user.id, user.email)
+
+      const insertData = {
+        name: item.name,
+        web: item.web || null,
+        contact: item.contact || null,
+        address: item.address || null,
+        description: item.description || null,
+        city: item.city || null,
+        coordinates: item.coordinates || null,
+        type: item.type,
+        user_id: user.id,
+      }
+      console.log('Insert data:', insertData)
 
       const { data, error } = await supabase
         .from('saved_items')
-        .insert([
-          {
-            name: item.name,
-            web: item.web || null,
-            contact: item.contact || null,
-            address: item.address || null,
-            description: item.description || null,
-            type: item.type,
-            user_id: user.id,
-          },
-        ])
+        .insert([insertData])
         .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error adding item:', error)
+        throw error
+      }
+      console.log('Item added successfully:', data)
       return { data, error: null }
     } catch (error) {
+      console.error('Error in addItem:', error)
       return { data: null, error }
     }
   }
@@ -91,7 +105,11 @@ export const useSupabase = () => {
   const getItems = async (type?: 'entidad' | 'centro') => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
-      if (userError || !user) throw new Error('Not authenticated')
+      if (userError || !user) {
+        console.error('Not authenticated:', userError)
+        throw new Error('Not authenticated')
+      }
+      console.log('Loading items for user:', user.id)
 
       let query = supabase
         .from('saved_items')
@@ -104,9 +122,14 @@ export const useSupabase = () => {
 
       const { data, error } = await query.order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Error fetching items:', error)
+        throw error
+      }
+      console.log('Items loaded:', data)
       return { data, error: null }
     } catch (error) {
+      console.error('Error in getItems:', error)
       return { data: null, error }
     }
   }
@@ -121,6 +144,8 @@ export const useSupabase = () => {
           contact: item.contact || null,
           address: item.address || null,
           description: item.description || null,
+          city: item.city || null,
+          coordinates: item.coordinates || null,
         })
         .eq('id', id)
         .select()

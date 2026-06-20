@@ -195,13 +195,33 @@
                       <input
                         v-model="entidadForm.contact"
                         type="text"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
+                        class="mb-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
                         placeholder="Contacto"
                       />
+                      <TownAutocomplete
+                        v-model="entidadForm.city"
+                        placeholder="Localidad"
+                        class="mb-2"
+                      />
+                      <div class="flex gap-2">
+                        <input
+                          v-model="entidadForm.coordinates"
+                          type="text"
+                          class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
+                          placeholder="Latitud y longitud"
+                        />
+                        <button
+                          type="button"
+                          class="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+                          @click="entidadMapPicker = true"
+                        >
+                          🗺️
+                        </button>
+                      </div>
                     </div>
                   </template>
 
-                  <template v-else>
+                      <template v-else>
                     <div
                       v-for="(item, index) in centroFields"
                       :key="item.id"
@@ -226,18 +246,26 @@
                         class="mb-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
                         placeholder="Teléfono"
                       />
-                      <input
+                      <TownAutocomplete
                         v-model="centroForm.city"
-                        type="text"
-                        class="mb-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
                         placeholder="Ciudad o pueblo"
+                        class="mb-2"
                       />
-                      <input
-                        v-model="centroForm.coordinates"
-                        type="text"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
-                        placeholder="Latitud y longitud"
-                      />
+                      <div class="flex gap-2">
+                        <input
+                          v-model="centroForm.coordinates"
+                          type="text"
+                          class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
+                          placeholder="Latitud y longitud"
+                        />
+                        <button
+                          type="button"
+                          class="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+                          @click="showMapPicker = true"
+                        >
+                          🗺️
+                        </button>
+                      </div>
                     </div>
                   </template>
                 </div>
@@ -317,6 +345,17 @@
               </div>
             </div>
           </transition>
+
+          <MapPicker
+            :visible="showMapPicker"
+            @close="showMapPicker = false"
+            @select="handleCentroMapSelect"
+          />
+          <MapPicker
+            :visible="entidadMapPicker"
+            @close="entidadMapPicker = false"
+            @select="handleEntidadMapSelect"
+          />
         </div>
       </template>
     </section>
@@ -329,6 +368,8 @@ import { useUserStore } from '../store/userStore'
 import { useSupabase } from '../composables/useSupabase'
 import BaseLayout from '../components/layout/BaseLayout.vue'
 import RegisterModal from '../components/RegisterModal.vue'
+import MapPicker from '../components/MapPicker.vue'
+import TownAutocomplete from '../components/TownAutocomplete.vue'
 
 const userStore = useUserStore()
 const { addItem, getItems, updateItem, deleteItem } = useSupabase()
@@ -343,6 +384,8 @@ const searchQuery = ref('')
 const sortOrder = ref<'recientes' | 'antiguos' | 'alfabetico'>('recientes')
 const isLoading = ref(false)
 const isSaving = ref(false)
+const showMapPicker = ref(false)
+const entidadMapPicker = ref(false)
 
 // Formulario para entidades
 const entidadForm = ref({
@@ -351,6 +394,8 @@ const entidadForm = ref({
   description: '',
   address: '',
   contact: '',
+  city: '',
+  coordinates: '',
 })
 
 // Formulario para centros
@@ -444,7 +489,7 @@ const togglePopup = () => {
 }
 
 const resetForms = () => {
-  entidadForm.value = { name: '', web: '', description: '', address: '', contact: '' }
+  entidadForm.value = { name: '', web: '', description: '', address: '', contact: '', city: '', coordinates: '' }
   centroForm.value = { name: '', email: '', phone: '', city: '', coordinates: '' }
 }
 
@@ -455,6 +500,8 @@ watch(selectedFilter, (value) => {
 })
 
 const savePopupData = async () => {
+  console.log('savePopupData called, selectedTab:', selectedTab.value)
+  
   if (selectedTab.value === 'entidades') {
     if (!entidadForm.value.name.trim()) {
       alert('Por favor rellena el nombre de la entidad')
@@ -462,20 +509,26 @@ const savePopupData = async () => {
     }
     isSaving.value = true
     try {
-      await addItem({
+      const itemData = {
         name: entidadForm.value.name,
         web: entidadForm.value.web,
         description: entidadForm.value.description,
         address: entidadForm.value.address,
         contact: entidadForm.value.contact,
-        type: 'entidad',
-      })
+        city: entidadForm.value.city,
+        coordinates: entidadForm.value.coordinates,
+        type: 'entidad' as const,
+      }
+      console.log('Saving entidad:', itemData)
+      const result = await addItem(itemData)
+      console.log('Save result:', result)
       await loadItems()
       showPopup.value = false
       resetForms()
+      selectedPage.value = 'Guardados'
     } catch (error) {
       console.error('Error saving entidad:', error)
-      alert('Error al guardar la entidad')
+      alert('Error al guardar la entidad: ' + ((error as Error)?.message || String(error)))
     } finally {
       isSaving.value = false
     }
@@ -486,20 +539,24 @@ const savePopupData = async () => {
     }
     isSaving.value = true
     try {
-      await addItem({
+      const itemData = {
         name: centroForm.value.name,
-        contact: centroForm.value.email,
-        web: centroForm.value.phone,
-        address: centroForm.value.city,
-        description: centroForm.value.coordinates,
-        type: 'centro',
-      })
+        contact: centroForm.value.phone,
+        web: centroForm.value.email,
+        city: centroForm.value.city,
+        coordinates: centroForm.value.coordinates,
+        type: 'centro' as const,
+      }
+      console.log('Saving centro:', itemData)
+      const result = await addItem(itemData)
+      console.log('Save result:', result)
       await loadItems()
       showPopup.value = false
       resetForms()
+      selectedPage.value = 'Guardados'
     } catch (error) {
       console.error('Error saving centro:', error)
-      alert('Error al guardar el centro')
+      alert('Error al guardar el centro: ' + ((error as Error)?.message || String(error)))
     } finally {
       isSaving.value = false
     }
@@ -531,6 +588,14 @@ const saveSavedItem = async () => {
   } finally {
     isSaving.value = false
   }
+}
+
+const handleCentroMapSelect = (coords: { lat: number; lng: number }) => {
+  centroForm.value.coordinates = `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`
+}
+
+const handleEntidadMapSelect = (coords: { lat: number; lng: number }) => {
+  entidadForm.value.coordinates = `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`
 }
 
 const deleteSavedItem = async (id: string) => {
