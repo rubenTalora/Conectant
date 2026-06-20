@@ -30,3 +30,6 @@ build/
 
 # Supabase local
 .supabase/
+# Source maps
+*.map
+
