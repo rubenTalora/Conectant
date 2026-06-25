@@ -8,10 +8,8 @@ La app carga sus datos exclusivamente desde Supabase. Si Supabase no está confi
 
 - Listado de centros especializados desde Supabase.
 - Detalle de cada centro con nombre, dirección, descripción, imagen y asociación vinculada.
-- Listado de asociaciones desde Supabase.
 - Detalle de cada asociación con información de contacto y centros asociados.
 - Navegación inferior entre Centros, Mapa y Asociaciones.
-- Botón de recarga en los listados para volver a consultar Supabase.
 - Pantalla de mapa preparada como placeholder para una futura integración.
 
 ## Modelo de datos
@@ -30,29 +28,13 @@ La relación es:
 
 Por eso, en la pantalla inicial aparecen todos los centros de forma independiente, y en la pantalla de asociaciones aparecen las asociaciones con sus centros agrupados.
 
-## Tablas esperadas en Supabase
-
-El repositorio lee dos tablas:
-
-- `associations`
-- `centros`
-
-Puedes crear la estructura base con el script [supabase/schema.sql](supabase/schema.sql).
-
-Columnas principales:
-
-```text
-associations: id, name, type, description, contact, website
-centros: id, name, address, lat, lng, association_id, description
-```
-
 ## Cómo ejecutar el proyecto con Supabase
 
 Requisitos:
 
 - Flutter SDK instalado.
 - Un proyecto de Supabase creado.
-- Las tablas anteriores creadas en la base de datos.
+- Las tablas creadas en la base de datos.
 - Políticas RLS que permitan lectura pública si se usa la clave anon.
 
 Comandos:
@@ -63,7 +45,6 @@ flutter pub get
 flutter run --dart-define=SUPABASE_URL="https://TU-PROYECTO.supabase.co" --dart-define=SUPABASE_ANON_KEY="TU_ANON_KEY"
 ```
 
-Si añades o modificas centros/asociaciones en Supabase, aparecerán en la app al reiniciarla o al pulsar el botón de recarga.
 
 ## Estructura del proyecto
 
@@ -92,10 +73,18 @@ lib/
 
 ## Estado actual
 
-La aplicación tiene implementadas las pantallas principales, la navegación, la relación entre centros y asociaciones y la lectura desde Supabase. La parte del mapa todavía está en desarrollo y actualmente muestra una pantalla informativa.
+La aplicación cuenta con las siguientes funcionalidades implementadas:
+- Pantalla principal con listado de centros especializados
+- Pantalla de detalle de centro
+- Pantalla de listado de asociaciones
+- Pantalla de detalle de asociación
+- Navegación inferior entre secciones
+- Mapa interactivo con marcadores de centros y lista desplegable
+- Conexión a Supabase para carga de datos
+- Botón de recarga para actualizar datos desde Supabase
 
 ## Próximos pasos
 
-- Integrar un mapa real usando las coordenadas de cada centro.
-- Añadir imágenes definitivas desde los assets del diseño o desde Supabase Storage.
-- Pulir estilos para ajustarlos completamente a los bocetos de Figma.
+- Integración de imágenes de centros desde assets o Supabase Storage
+- Ajuste de estilos para fidelidad completa con el diseño Figma
+- Posible implementación de favoritos o búsqueda
