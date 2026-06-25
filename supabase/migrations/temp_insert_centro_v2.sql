@@ -1,0 +1,1 @@
+INSERT INTO centros (name, address, lat, lng, association_id, description) VALUES ('Centro de Prueba v2', 'Calle Nueva 456', 40.4200, -3.7100, 'abe5a642-2e72-487c-8599-8463bc8a1ebf', 'Segundo centro de prueba');

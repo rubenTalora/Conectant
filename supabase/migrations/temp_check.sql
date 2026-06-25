@@ -1,0 +1,1 @@
+SELECT id, name, type, description, contact, web, address, city, coordinates, created_at FROM saved_items ORDER BY created_at DESC;

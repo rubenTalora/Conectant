@@ -29,4 +29,20 @@ class Centro {
       description: map['description'] ?? '',
     );
   }
+
+  factory Centro.fromSavedItem(Map<String, dynamic> map) {
+    return Centro(
+      id: map['id'].toString(),
+      name: map['name'] ?? '',
+      address: map['address'] ?? '',
+      lat: (map['coordinates'] as String?)?.split(',')[0].trim().isNotEmpty == true
+          ? double.tryParse((map['coordinates'] as String).split(',')[0].trim()) ?? 0
+          : 0,
+      lng: (map['coordinates'] as String?)?.split(',')[1].trim().isNotEmpty == true
+          ? double.tryParse((map['coordinates'] as String).split(',')[1].trim()) ?? 0
+          : 0,
+      associationId: '',
+      description: map['description'] ?? '',
+    );
+  }
 }

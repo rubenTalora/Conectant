@@ -26,4 +26,15 @@ class Association {
       website: map['website'] ?? '',
     );
   }
+
+  factory Association.fromSavedItem(Map<String, dynamic> map) {
+    return Association(
+      id: map['id'].toString(),
+      name: map['name'] ?? '',
+      type: map['type'] ?? 'entidad',
+      description: map['description'] ?? '',
+      contact: map['contact'] ?? '',
+      website: map['web'] ?? '',
+    );
+  }
 }

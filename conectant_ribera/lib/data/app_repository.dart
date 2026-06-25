@@ -14,17 +14,35 @@ class AppRepository {
   Future<AppData> loadAppData() async {
     final client = _client;
 
-    final associationRows =
-        await client.from('associations').select().order('name');
-    final centroRows = await client.from('centros').select().order('name');
+    try {
+      final savedItems = await client
+          .from('saved_items')
+          .select()
+          .order('created_at', ascending: false);
 
-    return AppData(
-      centros: centroRows.map<Centro>((row) => Centro.fromMap(row)).toList(),
-      associations: associationRows
-          .map<Association>(
-            (row) => Association.fromMap(row),
-          )
-          .toList(),
-    );
+      print('DEBUG: savedItems count: ${savedItems.length}');
+      print('DEBUG: savedItems: $savedItems');
+
+      final centros = savedItems
+          .where((item) => item['type'] == 'centro')
+          .map<Centro>((row) => Centro.fromSavedItem(row))
+          .toList();
+
+      final associations = savedItems
+          .where((item) => item['type'] == 'entidad')
+          .map<Association>((row) => Association.fromSavedItem(row))
+          .toList();
+
+      print('DEBUG: centros count: ${centros.length}');
+      print('DEBUG: associations count: ${associations.length}');
+
+      return AppData(
+        centros: centros,
+        associations: associations,
+      );
+    } catch (e) {
+      print('ERROR loading app data: $e');
+      rethrow;
+    }
   }
 }

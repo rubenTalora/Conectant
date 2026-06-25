@@ -1,0 +1,1 @@
+INSERT INTO direccion (name, type, description, contact, website) VALUES ('Centro Ejemplo', 'centro', 'Centro de prueba', '123456789', 'www.ejemplo.com') RETURNING id;
