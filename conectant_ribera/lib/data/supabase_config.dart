@@ -1,25 +1,34 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_credentials.dart';
 
 class SupabaseConfig {
-  static const url = String.fromEnvironment('SUPABASE_URL');
-  static const anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  static const url = SupabaseCredentials.url;
+  static const anonKey = SupabaseCredentials.anonKey;
 
-  static bool get isConfigured => url.isNotEmpty && anonKey.isNotEmpty;
+  static bool get isConfigured =>
+      url.isNotEmpty &&
+      url != 'https://TU-PROYECTO.supabase.co' &&
+      anonKey.isNotEmpty &&
+      anonKey != 'TU_ANON_KEY';
 
   static Future<void> initialize() async {
     if (!isConfigured) {
-      return;
+      throw StateError(
+        'Supabase no está configurado. Edita lib/data/supabase_credentials.dart con tu URL y anon key.',
+      );
     }
 
     await Supabase.initialize(
       url: url,
-      publishableKey: anonKey,
+      anonKey: anonKey,
     );
   }
 
-  static SupabaseClient? get client {
+  static SupabaseClient get client {
     if (!isConfigured) {
-      return null;
+      throw StateError(
+        'Supabase no está configurado. Edita lib/data/supabase_credentials.dart con tu URL y anon key.',
+      );
     }
     return Supabase.instance.client;
   }
